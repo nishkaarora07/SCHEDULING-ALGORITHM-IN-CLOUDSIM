@@ -1,0 +1,83 @@
+import java.util.*;
+
+class Process {
+    int pid;        // process id
+    int arrival;    // arrival time
+    int burst;      // burst time
+    int remaining;  // remaining burst
+    int completion; // completion time
+    int turnaround; // turnaround time
+    int waiting;    // waiting time
+
+    Process(int pid, int arrival, int burst) {
+        this.pid = pid;
+        this.arrival = arrival;
+        this.burst = burst;
+        this.remaining = burst;
+    }
+}
+
+public class RoundRobinExample {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Example: 5 processes
+        int n = 5;
+        int timeQuantum = 3; // fixed time slice
+
+        // Example input (can be modified)
+        int[] arrival = {0, 1, 2, 3, 4};
+        int[] burst =   {5, 4, 2, 1, 6};
+
+        List<Process> processes = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            processes.add(new Process(i+1, arrival[i], burst[i]));
+        }
+
+        // Queue for Round Robin
+        Queue<Process> queue = new LinkedList<>();
+        int currentTime = 0;
+        int completed = 0;
+
+        // Sort by arrival
+        processes.sort(Comparator.comparingInt(p -> p.arrival));
+        queue.add(processes.get(0));
+        int index = 1;
+
+        while (!queue.isEmpty()) {
+            Process current = queue.poll();
+
+            // If process arrives later than current time
+            if (currentTime < current.arrival)
+                currentTime = current.arrival;
+
+            int execTime = Math.min(timeQuantum, current.remaining);
+            current.remaining -= execTime;
+            currentTime += execTime;
+
+            // Add new arrivals to queue
+            while (index < n && processes.get(index).arrival <= currentTime) {
+                queue.add(processes.get(index));
+                index++;
+            }
+
+            if (current.remaining > 0) {
+                // Re-queue unfinished process
+                queue.add(current);
+            } else {
+                // Process completed
+                current.completion = currentTime;
+                current.turnaround = current.completion - current.arrival;
+                current.waiting = current.turnaround - current.burst;
+                completed++;
+            }
+        }
+
+        // Print results
+        System.out.println("PID\tAT\tBT\tCT\tTAT\tWT");
+        for (Process p : processes) {
+            System.out.println(p.pid + "\t" + p.arrival + "\t" + p.burst + "\t" +
+                    p.completion + "\t" + p.turnaround + "\t" + p.waiting);
+        }
+    }
+}

@@ -1,0 +1,32 @@
+🔹 Step 1: Update your package list
+sudo apt update
+
+🔹 Step 2: Install required dependencies
+sudo apt install -y wget gnupg software-properties-common
+
+🔹 Step 3: Add Oracle VirtualBox repository key
+wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+
+🔹 Step 4: Add the VirtualBox repository
+
+For Ubuntu 22.04 (Jammy Jellyfish):
+
+echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian jammy contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+
+
+For Ubuntu 20.04 (Focal Fossa):
+
+echo "deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian focal contrib" | sudo tee /etc/apt/sources.list.d/virtualbox.list
+
+🔹 Step 5: Update and install VirtualBox
+sudo apt update
+sudo apt install -y virtualbox-7.0
+
+🔹 Step 6: Verify installation
+virtualbox --version
+
+
+✅ Now VirtualBox should be installed, and you can launch it from the application menu or by typing:
+
+virtualbox
